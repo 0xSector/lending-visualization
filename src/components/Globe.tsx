@@ -30,9 +30,9 @@ interface GlobeProps {
 export function Globe({
   className,
   size = 400,
-  baseColor = "#00A1E0", // Visa blue
-  glowColor = "#00A1E0",
-  markerColor = "#1A1F71", // Visa navy
+  baseColor = "#FFFFFF", // White globe surface
+  glowColor = "#00A1E0", // Visa light blue glow
+  markerColor = "#00A1E0", // Visa light blue for city markers
 }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const globeRef = useRef<ReturnType<typeof createGlobe> | null>(null);
@@ -48,21 +48,24 @@ export function Globe({
 
     const devicePixelRatio = window.devicePixelRatio || 1;
 
+    // Visa light blue for land dots
+    const visaBlue: [number, number, number] = [0, 161/255, 224/255]; // #00A1E0
+
     globeRef.current = createGlobe(canvas, {
       devicePixelRatio,
       width: size * devicePixelRatio,
       height: size * devicePixelRatio,
       phi: 0,
       theta: 0.25,
-      dark: 1, // Dark mode enabled
+      dark: 0, // Light mode - white background
       scale: 1.05,
-      diffuse: 1.4,
+      diffuse: 2,
       mapSamples: 20000,
-      mapBrightness: 4,
-      baseColor: resolvedBaseColor,
+      mapBrightness: 8,
+      baseColor: visaBlue, // Visa blue for land dots
       markerColor: resolvedMarkerColor,
       glowColor: resolvedGlowColor,
-      opacity: 0.85,
+      opacity: 1,
       offset: [0, 0],
       markers: [
         // Major DeFi hubs

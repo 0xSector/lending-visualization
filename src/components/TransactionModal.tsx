@@ -45,7 +45,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
           <div className={`absolute top-0 left-0 right-0 h-0.5 ${actionStyle.accent} opacity-60`} />
 
           {/* Header */}
-          <div className="p-6 border-b border-white/5">
+          <div className="p-6 border-b border-black/5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <span className={`font-display text-2xl italic ${actionStyle.text}`}>
@@ -55,7 +55,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
               </div>
               <button
                 onClick={onClose}
-                className="text-morpho-silver/60 hover:text-morpho-pearl transition-colors p-1 rounded-lg hover:bg-white/5"
+                className="text-morpho-silver/60 hover:text-morpho-pearl transition-colors p-1 rounded-lg hover:bg-black/5"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
@@ -88,7 +88,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
             </h3>
             <div className="space-y-0">
               {/* Wallet */}
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
+              <div className="flex justify-between items-center py-3 border-b border-black/5">
                 <span className="text-morpho-silver text-sm">Wallet</span>
                 <span className="font-mono text-sm text-morpho-pearl">
                   {truncateAddress(transaction.walletAddress)}
@@ -96,7 +96,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
               </div>
 
               {/* Asset & Amount */}
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
+              <div className="flex justify-between items-center py-3 border-b border-black/5">
                 <span className="text-morpho-silver text-sm">Amount</span>
                 <span className="font-semibold text-morpho-pearl font-mono">
                   {formatAmount(transaction.amount, transaction.asset)} <span className="text-morpho-silver">{transaction.asset}</span>
@@ -105,7 +105,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
 
               {/* APY */}
               {transaction.apy && (
-                <div className="flex justify-between items-center py-3 border-b border-white/5">
+                <div className="flex justify-between items-center py-3 border-b border-black/5">
                   <span className="text-morpho-silver text-sm">
                     {transaction.action === 'borrow' ? 'Borrow APY' : 'Supply APY'}
                   </span>
@@ -117,7 +117,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
 
               {/* Market */}
               {transaction.marketName && (
-                <div className="flex justify-between items-center py-3 border-b border-white/5">
+                <div className="flex justify-between items-center py-3 border-b border-black/5">
                   <span className="text-morpho-silver text-sm">Market</span>
                   <span className="text-sm text-morpho-pearl font-mono">
                     {transaction.marketName}
@@ -127,7 +127,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
 
               {/* Health Factor */}
               {transaction.healthFactor && (
-                <div className="flex justify-between items-center py-3 border-b border-white/5">
+                <div className="flex justify-between items-center py-3 border-b border-black/5">
                   <span className="text-morpho-silver text-sm">Health Factor</span>
                   <div className="flex items-center gap-2 font-mono">
                     <span className="font-semibold text-morpho-pearl">{transaction.healthFactor.toFixed(2)}</span>
@@ -143,7 +143,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
               )}
 
               {/* Timestamp */}
-              <div className="flex justify-between items-center py-3 border-b border-white/5">
+              <div className="flex justify-between items-center py-3 border-b border-black/5">
                 <span className="text-morpho-silver text-sm">Time</span>
                 <span className="text-morpho-pearl text-sm font-mono">
                   {formatRelativeTime(transaction.timestamp)}
@@ -162,7 +162,7 @@ export function TransactionModal({ transaction, isOpen, onClose }: TransactionMo
           <div className="p-6 bg-morpho-charcoal/50 rounded-b-2xl">
             <a
               href="#"
-              className="block w-full text-center py-3 px-4 bg-gradient-to-r from-accent-cyan to-accent-violet text-morpho-black rounded-xl font-semibold text-sm tracking-wide hover:opacity-90 transition-opacity"
+              className="block w-full text-center py-3 px-4 bg-gradient-to-r from-accent-cyan to-accent-violet text-white rounded-xl font-semibold text-sm tracking-wide hover:opacity-90 transition-opacity"
               onClick={(e) => {
                 e.preventDefault();
                 alert('Block explorer integration coming soon!');

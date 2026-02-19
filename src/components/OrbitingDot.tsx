@@ -9,17 +9,9 @@ interface OrbitingDotProps {
   tablePosition: { x: number; y: number };
 }
 
-// Asset icon configurations - refined dark theme
-const ASSET_ICONS: Record<Asset, { symbol: string; bg: string; text: string; glow: string }> = {
-  USDC: { symbol: 'USDC', bg: '#2775CA', text: '#E8E8EC', glow: 'rgba(39, 117, 202, 0.5)' },
-  ETH: { symbol: 'ETH', bg: '#627EEA', text: '#E8E8EC', glow: 'rgba(98, 126, 234, 0.5)' },
-  WBTC: { symbol: 'BTC', bg: '#F7931A', text: '#0A0A0B', glow: 'rgba(247, 147, 26, 0.5)' },
-  DAI: { symbol: 'DAI', bg: '#F5AC37', text: '#0A0A0B', glow: 'rgba(245, 172, 55, 0.5)' },
-  USDT: { symbol: 'USDT', bg: '#26A17B', text: '#E8E8EC', glow: 'rgba(38, 161, 123, 0.5)' },
-  WETH: { symbol: 'ETH', bg: '#627EEA', text: '#E8E8EC', glow: 'rgba(98, 126, 234, 0.5)' },
-  cbETH: { symbol: 'cbE', bg: '#0052FF', text: '#E8E8EC', glow: 'rgba(0, 82, 255, 0.5)' },
-  stETH: { symbol: 'stE', bg: '#00A3FF', text: '#E8E8EC', glow: 'rgba(0, 163, 255, 0.5)' },
-};
+// Visa brand colors
+const VISA_BLUE = '#00A1E0';
+const VISA_BLUE_GLOW = 'rgba(0, 161, 224, 0.5)';
 
 export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition }: OrbitingDotProps) {
   // Start from behind the globe (left side, angle = 200 degrees)
@@ -136,8 +128,6 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
       ? 1 - settleProgress * 0.5
       : isInFront ? 1 : 0.35;
 
-  const assetConfig = ASSET_ICONS[asset];
-
   // Memoize trail elements
   const trailElements = useMemo(() => {
     return trail.map((point, i) => {
@@ -155,7 +145,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
             top: point.y,
             width: 10 * trailScale,
             height: 10 * trailScale,
-            backgroundColor: assetConfig.bg,
+            backgroundColor: VISA_BLUE,
             opacity: trailOpacity,
             transform: 'translate(-50%, -50%)',
             zIndex: trailIsInFront ? 15 : 3,
@@ -163,7 +153,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
         />
       );
     });
-  }, [trail, assetConfig.bg]);
+  }, [trail]);
 
   return (
     <>
@@ -185,7 +175,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
         <div
           className="absolute rounded-full blur-xl"
           style={{
-            backgroundColor: assetConfig.glow,
+            backgroundColor: VISA_BLUE_GLOW,
             width: 56,
             height: 56,
             left: -18,
@@ -197,7 +187,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
         <div
           className="absolute rounded-full blur-md"
           style={{
-            backgroundColor: assetConfig.bg,
+            backgroundColor: VISA_BLUE,
             width: 40,
             height: 40,
             left: -10,
@@ -209,13 +199,13 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center font-semibold text-[10px] tracking-wide font-mono"
           style={{
-            backgroundColor: assetConfig.bg,
-            color: assetConfig.text,
-            border: '1px solid rgba(255,255,255,0.2)',
-            boxShadow: `0 4px 20px ${assetConfig.glow}, inset 0 1px 0 rgba(255,255,255,0.1)`,
+            backgroundColor: VISA_BLUE,
+            color: '#FFFFFF',
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: `0 4px 20px ${VISA_BLUE_GLOW}, inset 0 1px 0 rgba(255,255,255,0.2)`,
           }}
         >
-          {assetConfig.symbol.slice(0, 4)}
+          {asset.slice(0, 4)}
         </div>
       </div>
     </>

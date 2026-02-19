@@ -27,7 +27,7 @@ export function getDetailedSummary(tx: Transaction): string[] {
 
   switch (tx.action) {
     case 'supply':
-      summaries.push(`This user supplied ${amount} ${tx.asset} to Morpho Blue.`);
+      summaries.push(`This user supplied ${amount} ${tx.asset} to the lending protocol.`);
       if (tx.apy) {
         summaries.push(`They're now earning approximately ${formatAPY(tx.apy)} APY on this position.`);
       }
@@ -37,7 +37,7 @@ export function getDetailedSummary(tx: Transaction): string[] {
       break;
 
     case 'borrow':
-      summaries.push(`This user borrowed ${amount} ${tx.asset} from Morpho Blue.`);
+      summaries.push(`This user borrowed ${amount} ${tx.asset} from the lending protocol.`);
       if (tx.apy) {
         summaries.push(`They're paying approximately ${formatAPY(tx.apy)} APY on this loan.`);
       }
@@ -53,7 +53,7 @@ export function getDetailedSummary(tx: Transaction): string[] {
       break;
 
     case 'repay':
-      summaries.push(`This user repaid ${amount} ${tx.asset} to reduce their Morpho Blue debt.`);
+      summaries.push(`This user repaid ${amount} ${tx.asset} to reduce their the lending protocol debt.`);
       if (tx.healthFactor) {
         summaries.push(`This improved their health factor to ${tx.healthFactor.toFixed(2)}.`);
       }
@@ -61,7 +61,7 @@ export function getDetailedSummary(tx: Transaction): string[] {
       break;
 
     case 'withdraw':
-      summaries.push(`This user withdrew ${amount} ${tx.asset} from their Morpho Blue position.`);
+      summaries.push(`This user withdrew ${amount} ${tx.asset} from their the lending protocol position.`);
       if (tx.healthFactor) {
         summaries.push(`Their health factor is now ${tx.healthFactor.toFixed(2)}.`);
       }

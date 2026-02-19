@@ -1,5 +1,4 @@
 import type { Transaction, ActionType } from '../types/transaction';
-import { NetworkBadge } from './NetworkBadge';
 import { formatAmount, formatRelativeTime, truncateAddress } from '../utils/formatters';
 
 interface TransactionTableProps {
@@ -8,93 +7,148 @@ interface TransactionTableProps {
   newTransactionId?: string;
 }
 
-const ACTION_CONFIG: Record<ActionType, { icon: string; color: string; bg: string; glow: string }> = {
-  supply: { icon: '+', color: 'text-accent-emerald', bg: 'bg-accent-emerald/15', glow: 'shadow-[0_0_12px_rgba(52,211,153,0.3)]' },
-  borrow: { icon: '−', color: 'text-accent-cyan', bg: 'bg-accent-cyan/15', glow: 'shadow-[0_0_12px_rgba(0,229,204,0.3)]' },
-  repay: { icon: '↩', color: 'text-accent-violet', bg: 'bg-accent-violet/15', glow: 'shadow-[0_0_12px_rgba(157,122,255,0.3)]' },
-  withdraw: { icon: '↑', color: 'text-accent-amber', bg: 'bg-accent-amber/15', glow: 'shadow-[0_0_12px_rgba(255,181,71,0.3)]' },
-  liquidation: { icon: '!', color: 'text-accent-rose', bg: 'bg-accent-rose/15', glow: 'shadow-[0_0_12px_rgba(255,107,138,0.3)]' },
+const ACTION_LABELS: Record<ActionType, string> = {
+  supply: 'Supply',
+  borrow: 'Borrow',
+  repay: 'Repay',
+  withdraw: 'Withdraw',
+  liquidation: 'Liquidation',
 };
+
+// Generate a deterministic shade based on wallet address
+function getWalletBg(address: string): string {
+  const shades = [
+    'bg-[#1A1F71]', // Visa navy
+    'bg-[#00A1E0]', // Visa light blue
+    'bg-[#1A1F71]/80',
+    'bg-[#00A1E0]/80',
+  ];
+  const index = parseInt(address.slice(-4), 16) % shades.length;
+  return shades[index];
+}
+
+// Get initials from wallet address
+function getWalletInitials(address: string): string {
+  return address.slice(2, 4).toUpperCase();
+}
+
+// Calculate a percentage for the progress bar (mock)
+function getUtilization(tx: Transaction): number {
+  const seed = parseInt(tx.id.slice(-4), 16);
+  return 20 + (seed % 60);
+}
 
 export function TransactionTable({ transactions, onTransactionClick, newTransactionId }: TransactionTableProps) {
   return (
-    <div className="h-full flex flex-col glass-card rounded-2xl overflow-hidden relative">
-      {/* Subtle top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent-cyan/50 to-transparent" />
-
+    <div className="h-full flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="px-5 py-4 border-b border-white/5">
+      <div className="px-6 py-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg italic text-morpho-pearl">Recent Activity</h2>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-accent-emerald rounded-full animate-pulse" />
-            <span className="text-[10px] tracking-[0.15em] uppercase text-accent-emerald font-mono">Live</span>
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg font-semibold text-[#1A1F71]">Recent Activity</h2>
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#00A1E0]/10 border border-[#00A1E0]/20">
+              <span className="w-1.5 h-1.5 bg-[#00A1E0] rounded-full animate-pulse" />
+              <span className="text-xs font-medium text-[#00A1E0]">Live</span>
+            </span>
           </div>
+          <span className="text-sm text-gray-400">{transactions.length} transactions</span>
+        </div>
+      </div>
+
+      {/* Column Headers */}
+      <div className="px-6 py-3 border-b border-gray-100 bg-gray-50/50">
+        <div className="grid grid-cols-12 gap-4 text-xs font-medium text-gray-400 uppercase tracking-wider">
+          <div className="col-span-3">Wallet</div>
+          <div className="col-span-2">Action</div>
+          <div className="col-span-2">Asset</div>
+          <div className="col-span-3">Amount</div>
+          <div className="col-span-2 text-right">Time</div>
         </div>
       </div>
 
       {/* Transaction List */}
       <div className="flex-1 overflow-y-auto">
         {transactions.length === 0 ? (
-          <div className="flex items-center justify-center h-32 text-morpho-silver text-xs tracking-wider uppercase font-mono">
+          <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
             Awaiting transactions...
           </div>
         ) : (
-          <div className="divide-y divide-white/[0.03]">
+          <div className="divide-y divide-gray-50">
             {transactions.map((tx, index) => {
-              const config = ACTION_CONFIG[tx.action];
               const isNew = tx.id === newTransactionId;
+              const utilization = getUtilization(tx);
+              const isEven = index % 2 === 0;
 
               return (
                 <div
                   key={tx.id}
                   onClick={() => onTransactionClick(tx)}
                   className={`
-                    px-5 py-3.5 cursor-pointer transition-all duration-300 group
-                    hover:bg-white/[0.02]
-                    ${isNew ? 'animate-slide-in-row' : ''}
+                    px-6 py-4 cursor-pointer transition-all duration-200
+                    hover:bg-[#00A1E0]/10
+                    ${isNew ? 'animate-slide-in-row bg-[#00A1E0]/5' : isEven ? 'bg-white' : 'bg-gray-50/50'}
                   `}
-                  style={{
-                    animationDelay: isNew ? '0ms' : `${index * 50}ms`,
-                  }}
                 >
-                  <div className="flex items-center gap-4">
-                    {/* Action Icon */}
-                    <div
-                      className={`
-                        w-9 h-9 rounded-xl flex items-center justify-center
-                        ${config.bg} ${config.color} font-semibold text-sm flex-shrink-0
-                        transition-shadow duration-300
-                        ${isNew ? config.glow : 'group-hover:' + config.glow}
-                      `}
-                    >
-                      {config.icon}
+                  <div className="grid grid-cols-12 gap-4 items-center">
+                    {/* Wallet */}
+                    <div className="col-span-3 flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-full ${getWalletBg(tx.walletAddress)} flex items-center justify-center text-white text-sm font-semibold`}>
+                        {getWalletInitials(tx.walletAddress)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-[#1A1F71] truncate">
+                          {truncateAddress(tx.walletAddress)}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {tx.network}
+                        </p>
+                      </div>
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2.5">
-                        <span className={`text-xs font-semibold uppercase tracking-wider ${config.color}`}>
-                          {tx.action}
+                    {/* Action */}
+                    <div className="col-span-2">
+                      <span className="text-sm text-gray-700">
+                        {ACTION_LABELS[tx.action]}
+                      </span>
+                    </div>
+
+                    {/* Asset */}
+                    <div className="col-span-2">
+                      <span className="text-sm font-medium text-[#1A1F71]">
+                        {tx.asset}
+                      </span>
+                      {tx.collateralAsset && (
+                        <span className="text-xs text-gray-400 ml-1">
+                          / {tx.collateralAsset}
                         </span>
-                        <NetworkBadge network={tx.network} />
-                      </div>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-sm font-semibold text-morpho-pearl font-mono">
+                      )}
+                    </div>
+
+                    {/* Amount with progress bar */}
+                    <div className="col-span-3">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-[#00A1E0] rounded-full transition-all duration-500"
+                            style={{ width: `${utilization}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium text-gray-900 min-w-[80px] text-right">
                           {formatAmount(tx.amount, tx.asset)}
                         </span>
-                        <span className="text-xs text-morpho-silver font-mono">
-                          {tx.asset}
-                        </span>
-                        <span className="text-[10px] text-morpho-silver/60 font-mono">
-                          {truncateAddress(tx.walletAddress)}
-                        </span>
                       </div>
+                      {tx.apy && (
+                        <p className="text-xs text-gray-400 mt-0.5 text-right">
+                          {tx.apy.toFixed(2)}% APY
+                        </p>
+                      )}
                     </div>
 
                     {/* Time */}
-                    <div className="text-[10px] text-morpho-silver/70 flex-shrink-0 font-mono tracking-wide">
-                      {formatRelativeTime(tx.timestamp)}
+                    <div className="col-span-2 text-right">
+                      <span className="text-sm text-gray-400">
+                        {formatRelativeTime(tx.timestamp)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -105,15 +159,15 @@ export function TransactionTable({ transactions, onTransactionClick, newTransact
       </div>
 
       {/* Footer */}
-      <div className="px-5 py-3 border-t border-white/5 bg-morpho-charcoal/50">
+      <div className="px-6 py-3 border-t border-gray-100">
         <div className="flex items-center justify-between">
-          <p className="text-[10px] text-morpho-silver/50 tracking-[0.1em] uppercase font-mono">
-            {transactions.length} transactions
+          <p className="text-xs text-gray-400">
+            Onchain Lending Activity
           </p>
           <div className="flex items-center gap-1">
-            <div className="w-1 h-1 rounded-full bg-accent-cyan/50" />
-            <div className="w-1 h-1 rounded-full bg-accent-violet/50" />
-            <div className="w-1 h-1 rounded-full bg-accent-amber/50" />
+            <div className="w-2 h-2 rounded-full bg-[#1A1F71]" />
+            <div className="w-2 h-2 rounded-full bg-[#00A1E0]" />
+            <div className="w-2 h-2 rounded-full bg-[#F7B600]" />
           </div>
         </div>
       </div>

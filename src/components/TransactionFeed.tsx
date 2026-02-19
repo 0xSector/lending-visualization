@@ -77,7 +77,7 @@ export function TransactionFeed() {
           <span className="text-sm font-medium text-gray-500">Live Feed</span>
         </div>
         <h1 className="text-2xl font-bold text-visa-navy">
-          Morpho Transactions
+          Lending Transactions
         </h1>
         <p className="text-gray-500 mt-1">
           Click any transaction to see details

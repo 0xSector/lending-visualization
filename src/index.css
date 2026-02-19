@@ -2,13 +2,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @theme {
-  /* Terminal Luxe palette */
-  --color-morpho-black: #0A0A0B;
-  --color-morpho-charcoal: #141416;
-  --color-morpho-slate: #1E1E22;
-  --color-morpho-graphite: #2A2A30;
-  --color-morpho-silver: #8A8A94;
-  --color-morpho-pearl: #E8E8EC;
+  /* Light Mode palette */
+  --color-morpho-black: #FFFFFF;
+  --color-morpho-charcoal: #F8F9FA;
+  --color-morpho-slate: #F1F3F5;
+  --color-morpho-graphite: #E9ECEF;
+  --color-morpho-silver: #6B7280;
+  --color-morpho-pearl: #1F2937;
 
   /* Accent colors - jewel tones */
   --color-accent-cyan: #00E5CC;
@@ -157,7 +157,7 @@
 }
 
 body {
-  background-color: var(--color-morpho-black);
+  background-color: #FFFFFF;
   color: var(--color-morpho-pearl);
   font-family: var(--font-family-mono);
   font-size: 14px;
@@ -169,13 +169,13 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom scrollbar - sleek dark */
+/* Custom scrollbar - light mode */
 ::-webkit-scrollbar {
   width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: var(--color-morpho-charcoal);
+  background-color: #F1F3F5;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -189,8 +189,8 @@ body {
 
 /* Selection styling */
 ::selection {
-  background-color: rgba(0, 229, 204, 0.3);
-  color: var(--color-morpho-pearl);
+  background-color: rgba(0, 229, 204, 0.4);
+  color: #1F2937;
 }
 
 /* Transaction card animations */
@@ -202,7 +202,7 @@ body {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(10, 10, 11, 0.85);
+  background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(12px) saturate(120%);
   animation: fadeIn 0.25s ease-out forwards;
 }
@@ -246,20 +246,20 @@ body {
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Transaction table row animation */
+/* Transaction table row animation - Visa blue */
 @keyframes slideInRow {
   0% {
     transform: translateX(-16px);
     opacity: 0;
-    background-color: rgba(0, 229, 204, 0.08);
+    background-color: rgba(0, 161, 224, 0.15);
   }
   60% {
-    background-color: rgba(0, 229, 204, 0.12);
+    background-color: rgba(0, 161, 224, 0.1);
   }
   100% {
     transform: translateX(0);
     opacity: 1;
-    background-color: rgba(0, 229, 204, 0.04);
+    background-color: rgba(0, 161, 224, 0.05);
   }
 }
 
@@ -271,14 +271,14 @@ body {
 .glass-card {
   background: linear-gradient(
     135deg,
-    rgba(30, 30, 34, 0.9) 0%,
-    rgba(20, 20, 22, 0.95) 100%
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(248, 249, 250, 0.98) 100%
   );
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.3),
-    0 20px 40px -20px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 20px 40px -20px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
 }
 
 /* Noise texture overlay */
@@ -287,16 +287,16 @@ body {
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  opacity: 0.03;
+  opacity: 0.02;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: multiply;
 }
 
 /* Grid pattern background */
 .grid-pattern {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 

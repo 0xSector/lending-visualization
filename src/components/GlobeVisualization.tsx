@@ -118,12 +118,12 @@ export function GlobeVisualization() {
       ref={containerRef}
       className="relative w-full h-full min-h-[700px] flex"
     >
-      {/* Animated background particles - cyan accent */}
+      {/* Animated background particles - blue accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {particles.map((p) => (
           <div
             key={p.id}
-            className="absolute w-1 h-1 bg-accent-cyan/30 rounded-full animate-float"
+            className="absolute w-1 h-1 bg-blue-400/40 rounded-full animate-float"
             style={{
               left: `${p.left}%`,
               top: `${p.top}%`,
@@ -140,11 +140,11 @@ export function GlobeVisualization() {
         <div className="flex flex-col items-center">
           {/* Title */}
           <div className="text-center mb-10">
-            <h1 className="font-display text-5xl italic text-morpho-pearl mb-3 tracking-tight">
-              Morpho Live
+            <h1 className="font-display text-5xl italic text-[#1A1F71] mb-3 tracking-tight">
+              Onchain Lending
             </h1>
-            <p className="text-morpho-silver text-sm tracking-[0.15em] uppercase font-mono">
-              Global DeFi Lending • Real-time
+            <p className="text-gray-400 text-sm tracking-[0.15em] uppercase font-mono">
+              Global Activity • Real-time
             </p>
           </div>
 
@@ -154,11 +154,11 @@ export function GlobeVisualization() {
             className="relative"
             style={{ width: globeSize, height: globeSize }}
           >
-            {/* Globe glow - Visa blue */}
+            {/* Globe glow - Visa light blue */}
             <div
               className="absolute rounded-full animate-glow"
               style={{
-                background: 'radial-gradient(circle, rgba(0,161,224,0.2) 0%, rgba(0,161,224,0) 70%)',
+                background: 'radial-gradient(circle, rgba(0,161,224,0.15) 0%, rgba(0,161,224,0) 70%)',
                 width: globeSize * 1.5,
                 height: globeSize * 1.5,
                 left: -globeSize * 0.25,
@@ -182,21 +182,21 @@ export function GlobeVisualization() {
           </div>
 
           {/* Stats - refined pill */}
-          <div className="mt-10 flex items-center gap-4 text-xs glass-card px-5 py-2.5 rounded-full">
+          <div className="mt-10 flex items-center gap-4 text-xs bg-white shadow-sm border border-gray-100 px-5 py-2.5 rounded-full">
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-accent-emerald rounded-full animate-pulse" />
-              <span className="text-accent-emerald font-medium tracking-wide uppercase text-[10px]">Live</span>
+              <div className="w-1.5 h-1.5 bg-[#00A1E0] rounded-full animate-pulse" />
+              <span className="text-[#00A1E0] font-medium tracking-wide uppercase text-[10px]">Live</span>
             </div>
-            <div className="h-3 w-px bg-morpho-graphite" />
-            <div className="text-morpho-silver font-mono">
-              <span className="text-morpho-pearl font-semibold">{transactions.length}</span>
+            <div className="h-3 w-px bg-gray-200" />
+            <div className="text-gray-500 font-mono">
+              <span className="text-[#1A1F71] font-semibold">{transactions.length}</span>
               <span className="ml-1.5 text-[10px] tracking-wider">TXS</span>
             </div>
           </div>
         </div>
 
         {/* Right side - Transaction Table */}
-        <div className="w-[440px] h-[600px] flex-shrink-0">
+        <div className="w-[620px] h-[650px] flex-shrink-0">
           <TransactionTable
             transactions={transactions}
             onTransactionClick={handleTransactionClick}
