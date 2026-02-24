@@ -140,7 +140,7 @@ export function GlobeVisualization() {
         <div className="flex flex-col items-center">
           {/* Title */}
           <div className="text-center mb-10">
-            <h1 className="font-display text-5xl italic text-[#1A1F71] mb-3 tracking-tight">
+            <h1 className="text-5xl font-bold text-[#1A1F71] mb-3 tracking-tight" style={{ fontFamily: "'Libre Baskerville', serif" }}>
               Onchain Lending
             </h1>
             <p className="text-gray-400 text-sm tracking-[0.15em] uppercase font-mono">
