@@ -6,7 +6,7 @@ export function truncateAddress(address: string): string {
 }
 
 export function formatAmount(amount: number, asset: Asset): string {
-  const isStablecoin = ['USDC', 'DAI', 'USDT'].includes(asset);
+  const isStablecoin = ['USDC', 'DAI', 'USDT', 'PYUSD'].includes(asset);
 
   if (isStablecoin) {
     return new Intl.NumberFormat('en-US', {
@@ -71,6 +71,7 @@ export function getAssetColor(asset: Asset): string {
     'WETH': '#627EEA',
     'cbETH': '#0052FF',
     'stETH': '#00A3FF',
+    'PYUSD': '#0033A0',
   };
   return colors[asset] || '#6B7280';
 }

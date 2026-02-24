@@ -2,7 +2,7 @@ import type { Transaction, ActionType, Network, Asset } from '../types/transacti
 
 const ACTIONS: ActionType[] = ['supply', 'borrow', 'repay', 'withdraw', 'liquidation'];
 const NETWORKS: Network[] = ['Ethereum', 'Base', 'Arbitrum', 'Optimism'];
-const ASSETS: Asset[] = ['USDC', 'ETH', 'WBTC', 'DAI', 'USDT', 'WETH', 'cbETH', 'stETH'];
+const ASSETS: Asset[] = ['USDC', 'ETH', 'WBTC', 'DAI', 'USDT', 'WETH', 'cbETH', 'stETH', 'PYUSD'];
 
 const MARKET_NAMES = [
   'USDC/ETH (90% LLTV)',
@@ -35,6 +35,7 @@ function generateAmount(asset: Asset): number {
     'WETH': [0.1, 100],
     'cbETH': [0.1, 50],
     'stETH': [0.1, 100],
+    'PYUSD': [100, 500000],
   };
   const [min, max] = ranges[asset];
   return Math.round((Math.random() * (max - min) + min) * 100) / 100;
@@ -70,6 +71,7 @@ export function generateTransaction(): Transaction {
     apy: generateAPY(action),
     marketName: MARKET_NAMES[Math.floor(Math.random() * MARKET_NAMES.length)],
     healthFactor: generateHealthFactor(),
+    dataSource: 'mock',
   };
 
   // Add collateral info for liquidations

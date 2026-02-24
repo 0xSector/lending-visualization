@@ -2,7 +2,9 @@ export type ActionType = 'supply' | 'borrow' | 'repay' | 'withdraw' | 'liquidati
 
 export type Network = 'Ethereum' | 'Base' | 'Arbitrum' | 'Optimism';
 
-export type Asset = 'USDC' | 'ETH' | 'WBTC' | 'DAI' | 'USDT' | 'WETH' | 'cbETH' | 'stETH';
+export type Asset = 'USDC' | 'ETH' | 'WBTC' | 'DAI' | 'USDT' | 'WETH' | 'cbETH' | 'stETH' | 'PYUSD';
+
+export type DataSource = 'allium' | 'mock';
 
 export interface Transaction {
   id: string;
@@ -17,6 +19,9 @@ export interface Transaction {
   collateralAsset?: Asset;
   collateralAmount?: number;
   healthFactor?: number;
+  transactionHash?: string;
+  protocol?: string;
+  dataSource?: DataSource;
 }
 
 export interface TransactionCardProps {

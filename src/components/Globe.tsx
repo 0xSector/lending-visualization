@@ -42,7 +42,6 @@ export function Globe({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const resolvedBaseColor = hexToRgbNormalized(baseColor);
     const resolvedGlowColor = hexToRgbNormalized(glowColor);
     const resolvedMarkerColor = hexToRgbNormalized(markerColor);
 

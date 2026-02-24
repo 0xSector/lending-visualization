@@ -4,7 +4,7 @@ import { Globe } from './Globe';
 import { OrbitingDot } from './OrbitingDot';
 import { TransactionTable } from './TransactionTable';
 import { TransactionModal } from './TransactionModal';
-import { generateTransaction } from '../data/mockTransactions';
+import { useLendingData } from '../hooks/useLendingData';
 
 type DotPhase = 'orbiting' | 'settling' | 'done';
 
@@ -15,11 +15,18 @@ interface PendingTransaction {
 
 // Single orbit: 200° to -20° = 220° at 3° per 20ms ≈ 1.5 seconds
 const ORBIT_DURATION = 1500;
-const MAX_TRANSACTIONS = 25;
 
 export function GlobeVisualization() {
+  // Use the lending data hook for real/mock data
+  const {
+    currentTransaction,
+    displayedTransactions,
+    isLoading,
+    isUsingMockData,
+    queueLength,
+  } = useLendingData();
+
   const [pendingTx, setPendingTx] = useState<PendingTransaction | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [newTxId, setNewTxId] = useState<string | undefined>();
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,18 +73,20 @@ export function GlobeVisualization() {
     };
   }, [globeSize]);
 
-  // Start a new transaction (orbiting phase)
-  const startNewTransaction = useCallback(() => {
-    const newTx = generateTransaction();
-    setPendingTx({ transaction: newTx, phase: 'orbiting' });
+  // Watch for new transactions from the hook and start orbiting animation
+  useEffect(() => {
+    if (currentTransaction && !pendingTx) {
+      // Start orbiting animation for the new transaction
+      setPendingTx({ transaction: currentTransaction, phase: 'orbiting' });
 
-    // After single orbit, start settling
-    setTimeout(() => {
-      setPendingTx((prev) =>
-        prev ? { ...prev, phase: 'settling' } : null
-      );
-    }, ORBIT_DURATION);
-  }, []);
+      // After single orbit, start settling
+      setTimeout(() => {
+        setPendingTx((prev) =>
+          prev ? { ...prev, phase: 'settling' } : null
+        );
+      }, ORBIT_DURATION);
+    }
+  }, [currentTransaction, pendingTx]);
 
   // Handle when dot has settled into the table
   const handleDotSettled = useCallback(() => {
@@ -85,22 +94,12 @@ export function GlobeVisualization() {
     if (currentPendingTx) {
       const tx = currentPendingTx.transaction;
       setNewTxId(tx.id);
-      setTransactions((prev) => [tx, ...prev].slice(0, MAX_TRANSACTIONS));
       setPendingTx(null);
 
       // Clear the "new" highlight after animation
       setTimeout(() => setNewTxId(undefined), 800);
-
-      // Start next transaction
-      setTimeout(startNewTransaction, 300);
     }
-  }, [startNewTransaction]);
-
-  // Start the animation cycle
-  useEffect(() => {
-    const timer = setTimeout(startNewTransaction, 800);
-    return () => clearTimeout(timer);
-  }, [startNewTransaction]);
+  }, []);
 
   // Handle modal
   const handleTransactionClick = useCallback((tx: Transaction) => {
@@ -181,24 +180,34 @@ export function GlobeVisualization() {
             )}
           </div>
 
-          {/* Stats - refined pill */}
+          {/* Stats - refined pill with data source indicator */}
           <div className="mt-10 flex items-center gap-4 text-xs bg-white shadow-sm border border-gray-100 px-5 py-2.5 rounded-full">
             <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-[#00A1E0] rounded-full animate-pulse" />
-              <span className="text-[#00A1E0] font-medium tracking-wide uppercase text-[10px]">Live</span>
+              <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${isUsingMockData ? 'bg-amber-400' : 'bg-emerald-500'}`} />
+              <span className={`font-medium tracking-wide uppercase text-[10px] ${isUsingMockData ? 'text-amber-500' : 'text-emerald-600'}`}>
+                {isLoading ? 'Loading' : isUsingMockData ? 'Demo' : 'Live'}
+              </span>
             </div>
             <div className="h-3 w-px bg-gray-200" />
             <div className="text-gray-500 font-mono">
-              <span className="text-[#1A1F71] font-semibold">{transactions.length}</span>
+              <span className="text-[#1A1F71] font-semibold">{displayedTransactions.length}</span>
               <span className="ml-1.5 text-[10px] tracking-wider">TXS</span>
             </div>
+            {!isUsingMockData && queueLength > 0 && (
+              <>
+                <div className="h-3 w-px bg-gray-200" />
+                <div className="text-gray-400 font-mono text-[10px]">
+                  +{queueLength} queued
+                </div>
+              </>
+            )}
           </div>
         </div>
 
         {/* Right side - Transaction Table */}
         <div className="w-[620px] h-[650px] flex-shrink-0">
           <TransactionTable
-            transactions={transactions}
+            transactions={displayedTransactions}
             onTransactionClick={handleTransactionClick}
             newTransactionId={newTxId}
           />
