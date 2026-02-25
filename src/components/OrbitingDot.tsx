@@ -3,6 +3,7 @@ import type { Asset } from '../types/transaction';
 
 interface OrbitingDotProps {
   globeSize: number;
+  globeCenter: { x: number; y: number };
   phase: 'orbiting' | 'settling' | 'done';
   asset: Asset;
   onSettled: () => void;
@@ -36,7 +37,7 @@ function getAssetLogo(asset: string): string | null {
   return ASSET_LOGOS[asset] || null;
 }
 
-export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition }: OrbitingDotProps) {
+export function OrbitingDot({ globeSize, globeCenter, phase, asset, onSettled, tablePosition }: OrbitingDotProps) {
   // Start from behind the globe (left side, angle = 200 degrees)
   const [angle, setAngle] = useState(200);
   const [settleProgress, setSettleProgress] = useState(0);
@@ -49,8 +50,9 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
 
   const orbitRadiusX = globeSize * 0.55;
   const orbitRadiusY = globeSize * 0.2;
-  const centerX = globeSize / 2;
-  const centerY = globeSize / 2;
+  // Use globeCenter for positioning relative to main container
+  const centerX = globeCenter.x;
+  const centerY = globeCenter.y;
 
   // Store trail positions
   const [trail, setTrail] = useState<Array<{ x: number; y: number; angle: number }>>([]);
@@ -145,10 +147,11 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
   const settleScale = 1 - settleProgress * 0.3;
   const depthScale = phase === 'orbiting' ? orbitScale : orbitScale * settleScale;
 
+  // Keep fully visible during settling until the very end
   const opacity = phase === 'done'
     ? 0
     : phase === 'settling'
-      ? 1 - settleProgress * 0.5
+      ? settleProgress > 0.9 ? 1 - (settleProgress - 0.9) * 10 : 1 // Fade only in last 10%
       : isInFront ? 1 : 0.4;
 
   // Memoize trail elements
@@ -191,7 +194,8 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
           top: currentY,
           transform: `translate(-50%, -50%) scale(${depthScale})`,
           opacity,
-          zIndex: isInFront || phase === 'settling' ? 20 : 5,
+          zIndex: phase === 'settling' ? 100 : isInFront ? 20 : 5,
+          transition: phase === 'settling' ? 'none' : undefined,
         }}
       >
         {/* Asset circle */}

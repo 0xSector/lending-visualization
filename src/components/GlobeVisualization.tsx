@@ -31,8 +31,13 @@ export function GlobeVisualization() {
   const [globeSize, setGlobeSize] = useState(450);
   const containerRef = useRef<HTMLDivElement>(null);
   const globeContainerRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
   const pendingTxRef = useRef<PendingTransaction | null>(null);
   pendingTxRef.current = pendingTx;
+
+  // Track positions relative to main container for cross-element animation
+  const [globeCenter, setGlobeCenter] = useState({ x: 0, y: 0 });
+  const [tableTargetPos, setTableTargetPos] = useState({ x: 0, y: 0 });
 
   // Generate stable particle positions
   const particles = useMemo(() =>
@@ -62,14 +67,39 @@ export function GlobeVisualization() {
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
-  // Calculate table position relative to globe container
-  const tablePosition = useMemo(() => {
-    // Position where the dot should fly to (top of first row in table)
-    return {
-      x: globeSize + 80,   // Right of globe, aligned with wallet column
-      y: globeSize / 2 - 230, // Top of first row
+  // Calculate positions for cross-element animation
+  useEffect(() => {
+    const updatePositions = () => {
+      if (containerRef.current && globeContainerRef.current && tableRef.current) {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const globeRect = globeContainerRef.current.getBoundingClientRect();
+        const tableRect = tableRef.current.getBoundingClientRect();
+
+        // Globe center relative to main container
+        setGlobeCenter({
+          x: globeRect.left - containerRect.left + globeRect.width / 2,
+          y: globeRect.top - containerRect.top + globeRect.height / 2,
+        });
+
+        // Target position: first row of table (after header, roughly 120px down)
+        // Align with the asset icon position in the first column
+        setTableTargetPos({
+          x: tableRect.left - containerRect.left + 50, // Left side where asset icon appears
+          y: tableRect.top - containerRect.top + 120, // After header rows
+        });
+      }
+    };
+
+    updatePositions();
+    window.addEventListener('resize', updatePositions);
+    // Also update after a short delay to ensure layout is complete
+    const timer = setTimeout(updatePositions, 100);
+    return () => {
+      window.removeEventListener('resize', updatePositions);
+      clearTimeout(timer);
     };
   }, [globeSize]);
+
 
   // Watch for new transactions from the hook and start orbiting animation
   useEffect(() => {
@@ -168,17 +198,6 @@ export function GlobeVisualization() {
 
             {/* Globe */}
             <Globe size={globeSize} />
-
-            {/* Orbiting Dot */}
-            {pendingTx && (
-              <OrbitingDot
-                globeSize={globeSize}
-                phase={pendingTx.phase}
-                asset={pendingTx.transaction.asset}
-                onSettled={handleDotSettled}
-                tablePosition={tablePosition}
-              />
-            )}
           </div>
 
           {/* Stats - refined pill */}
@@ -198,7 +217,7 @@ export function GlobeVisualization() {
         </div>
 
         {/* Right side - Transaction Table */}
-        <div className="w-[620px] h-[650px] flex-shrink-0">
+        <div ref={tableRef} className="w-[620px] h-[650px] flex-shrink-0">
           <TransactionTable
             transactions={displayedTransactions}
             onTransactionClick={handleTransactionClick}
@@ -213,6 +232,18 @@ export function GlobeVisualization() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
+
+      {/* Orbiting Dot - positioned at main container level for cross-element animation */}
+      {pendingTx && (
+        <OrbitingDot
+          globeSize={globeSize}
+          globeCenter={globeCenter}
+          phase={pendingTx.phase}
+          asset={pendingTx.transaction.asset}
+          onSettled={handleDotSettled}
+          tablePosition={tableTargetPos}
+        />
+      )}
     </div>
   );
 }
