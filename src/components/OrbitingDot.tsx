@@ -9,9 +9,9 @@ interface OrbitingDotProps {
   tablePosition: { x: number; y: number };
 }
 
-// Transaction colors - bright orange/gold for contrast against blue globe
-const TRANSACTION_COLOR = '#F59E0B';
-const TRANSACTION_GLOW = 'rgba(245, 158, 11, 0.5)';
+// Visa brand colors
+const VISA_BLUE = '#00A1E0';
+const VISA_BLUE_GLOW = 'rgba(0, 161, 224, 0.5)';
 
 export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition }: OrbitingDotProps) {
   // Start from behind the globe (left side, angle = 200 degrees)
@@ -126,14 +126,14 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
     ? 0
     : phase === 'settling'
       ? 1 - settleProgress * 0.5
-      : 1;
+      : isInFront ? 1 : 0.35;
 
   // Memoize trail elements
   const trailElements = useMemo(() => {
     return trail.map((point, i) => {
       const trailRadians = (point.angle * Math.PI) / 180;
       const trailIsInFront = Math.cos(trailRadians) > -0.2;
-      const trailOpacity = ((15 - i) / 15) * 0.5;
+      const trailOpacity = ((15 - i) / 15) * 0.5 * (trailIsInFront ? 1 : 0.25);
       const trailScale = 1 - (i / 15) * 0.7;
 
       return (
@@ -145,7 +145,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
             top: point.y,
             width: 10 * trailScale,
             height: 10 * trailScale,
-            backgroundColor: TRANSACTION_COLOR,
+            backgroundColor: VISA_BLUE,
             opacity: trailOpacity,
             transform: 'translate(-50%, -50%)',
             zIndex: trailIsInFront ? 15 : 3,
@@ -175,7 +175,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
         <div
           className="absolute rounded-full blur-xl"
           style={{
-            backgroundColor: TRANSACTION_GLOW,
+            backgroundColor: VISA_BLUE_GLOW,
             width: 56,
             height: 56,
             left: -18,
@@ -187,7 +187,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
         <div
           className="absolute rounded-full blur-md"
           style={{
-            backgroundColor: TRANSACTION_COLOR,
+            backgroundColor: VISA_BLUE,
             width: 40,
             height: 40,
             left: -10,
@@ -199,10 +199,10 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center font-semibold text-[10px] tracking-wide font-mono"
           style={{
-            backgroundColor: TRANSACTION_COLOR,
+            backgroundColor: VISA_BLUE,
             color: '#FFFFFF',
             border: '1px solid rgba(255,255,255,0.3)',
-            boxShadow: `0 4px 20px ${TRANSACTION_GLOW}, inset 0 1px 0 rgba(255,255,255,0.2)`,
+            boxShadow: `0 4px 20px ${VISA_BLUE_GLOW}, inset 0 1px 0 rgba(255,255,255,0.2)`,
           }}
         >
           {asset.slice(0, 4)}

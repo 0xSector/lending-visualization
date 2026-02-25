@@ -47,8 +47,8 @@ export function Globe({
 
     const devicePixelRatio = window.devicePixelRatio || 1;
 
-    // Lighter blue for land dots - better contrast with transaction symbols
-    const visaBlue: [number, number, number] = [125/255, 211/255, 252/255]; // #7DD3FC (sky-300)
+    // Visa light blue for land dots
+    const visaBlue: [number, number, number] = [0, 161/255, 224/255]; // #00A1E0
 
     globeRef.current = createGlobe(canvas, {
       devicePixelRatio,
