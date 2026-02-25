@@ -9,9 +9,32 @@ interface OrbitingDotProps {
   tablePosition: { x: number; y: number };
 }
 
-// Visa brand colors
-const VISA_BLUE = '#00A1E0';
-const VISA_BLUE_GLOW = 'rgba(0, 161, 224, 0.5)';
+// Asset brand colors
+const ASSET_COLORS: Record<string, string> = {
+  USDC: '#2775CA', // USDC blue
+  USDT: '#26A17B', // Tether green
+  ETH: '#627EEA',  // Ethereum purple
+  WETH: '#627EEA', // Wrapped ETH
+  WBTC: '#F7931A', // Bitcoin orange
+  DAI: '#F5AC37',  // DAI yellow
+  cbETH: '#0052FF', // Coinbase blue
+  stETH: '#00A3FF', // Lido blue
+  PYUSD: '#0047BB', // PayPal blue
+};
+
+// Asset logo paths
+const ASSET_LOGOS: Record<string, string> = {
+  USDC: '/tokens/usdc.png',
+  USDT: '/tokens/usdt.png',
+};
+
+function getAssetColor(asset: string): string {
+  return ASSET_COLORS[asset] || '#87CEEB';
+}
+
+function getAssetLogo(asset: string): string | null {
+  return ASSET_LOGOS[asset] || null;
+}
 
 export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition }: OrbitingDotProps) {
   // Start from behind the globe (left side, angle = 200 degrees)
@@ -126,7 +149,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
     ? 0
     : phase === 'settling'
       ? 1 - settleProgress * 0.5
-      : isInFront ? 1 : 0.35;
+      : isInFront ? 1 : 0.4;
 
   // Memoize trail elements
   const trailElements = useMemo(() => {
@@ -145,7 +168,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
             top: point.y,
             width: 10 * trailScale,
             height: 10 * trailScale,
-            backgroundColor: VISA_BLUE,
+            backgroundColor: getAssetColor(asset),
             opacity: trailOpacity,
             transform: 'translate(-50%, -50%)',
             zIndex: trailIsInFront ? 15 : 3,
@@ -153,7 +176,7 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
         />
       );
     });
-  }, [trail]);
+  }, [trail, asset]);
 
   return (
     <>
@@ -171,42 +194,28 @@ export function OrbitingDot({ globeSize, phase, asset, onSettled, tablePosition 
           zIndex: isInFront || phase === 'settling' ? 20 : 5,
         }}
       >
-        {/* Outer glow effect */}
-        <div
-          className="absolute rounded-full blur-xl"
-          style={{
-            backgroundColor: VISA_BLUE_GLOW,
-            width: 56,
-            height: 56,
-            left: -18,
-            top: -18,
-            opacity: 0.6,
-          }}
-        />
-        {/* Inner glow */}
-        <div
-          className="absolute rounded-full blur-md"
-          style={{
-            backgroundColor: VISA_BLUE,
-            width: 40,
-            height: 40,
-            left: -10,
-            top: -10,
-            opacity: 0.4,
-          }}
-        />
         {/* Asset circle */}
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center font-semibold text-[10px] tracking-wide font-mono"
-          style={{
-            backgroundColor: VISA_BLUE,
-            color: '#FFFFFF',
-            border: '1px solid rgba(255,255,255,0.3)',
-            boxShadow: `0 4px 20px ${VISA_BLUE_GLOW}, inset 0 1px 0 rgba(255,255,255,0.2)`,
-          }}
-        >
-          {asset.slice(0, 4)}
-        </div>
+        {getAssetLogo(asset) ? (
+          <img
+            src={getAssetLogo(asset)!}
+            alt={asset}
+            className="w-10 h-10 rounded-full"
+            style={{
+              border: '2px solid #FFFFFF',
+            }}
+          />
+        ) : (
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-[10px] tracking-wide font-mono"
+            style={{
+              backgroundColor: getAssetColor(asset),
+              color: '#FFFFFF',
+              border: '2px solid #FFFFFF',
+            }}
+          >
+            {asset.slice(0, 4)}
+          </div>
+        )}
       </div>
     </>
   );

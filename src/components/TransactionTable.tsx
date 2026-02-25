@@ -15,21 +15,31 @@ const ACTION_LABELS: Record<ActionType, string> = {
   liquidation: 'Liquidation',
 };
 
-// Generate a deterministic shade based on wallet address
-function getWalletBg(address: string): string {
-  const shades = [
-    'bg-[#1A1F71]', // Visa navy
-    'bg-[#00A1E0]', // Visa light blue
-    'bg-[#1A1F71]/80',
-    'bg-[#00A1E0]/80',
-  ];
-  const index = parseInt(address.slice(-4), 16) % shades.length;
-  return shades[index];
+// Asset brand colors
+const ASSET_COLORS: Record<string, string> = {
+  USDC: '#2775CA', // USDC blue
+  USDT: '#26A17B', // Tether green
+  ETH: '#627EEA',  // Ethereum purple
+  WETH: '#627EEA', // Wrapped ETH
+  WBTC: '#F7931A', // Bitcoin orange
+  DAI: '#F5AC37',  // DAI yellow
+  cbETH: '#0052FF', // Coinbase blue
+  stETH: '#00A3FF', // Lido blue
+  PYUSD: '#0047BB', // PayPal blue
+};
+
+// Asset logo paths
+const ASSET_LOGOS: Record<string, string> = {
+  USDC: '/tokens/usdc.png',
+  USDT: '/tokens/usdt.png',
+};
+
+function getAssetColor(asset: string): string {
+  return ASSET_COLORS[asset] || '#87CEEB';
 }
 
-// Get initials from wallet address
-function getWalletInitials(address: string): string {
-  return address.slice(2, 4).toUpperCase();
+function getAssetLogo(asset: string): string | null {
+  return ASSET_LOGOS[asset] || null;
 }
 
 // Calculate a percentage for the progress bar (mock)
@@ -92,9 +102,20 @@ export function TransactionTable({ transactions, onTransactionClick, newTransact
                   <div className="grid grid-cols-12 gap-4 items-center">
                     {/* Wallet */}
                     <div className="col-span-3 flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full ${getWalletBg(tx.walletAddress)} flex items-center justify-center text-white text-sm font-semibold`}>
-                        {getWalletInitials(tx.walletAddress)}
-                      </div>
+                      {getAssetLogo(tx.asset) ? (
+                        <img
+                          src={getAssetLogo(tx.asset)!}
+                          alt={tx.asset}
+                          className="w-10 h-10 rounded-full"
+                        />
+                      ) : (
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center text-white text-[10px] font-semibold"
+                          style={{ backgroundColor: getAssetColor(tx.asset) }}
+                        >
+                          {tx.asset}
+                        </div>
+                      )}
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-[#1A1F71] truncate">
                           {truncateAddress(tx.walletAddress)}

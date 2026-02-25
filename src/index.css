@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
 @theme {
   /* Light Mode palette */
@@ -24,7 +24,7 @@
   --color-visa-navy: #E8E8EC;
   --color-visa-white: #FFFFFF;
 
-  --font-family-display: 'Instrument Serif', Georgia, serif;
+  --font-family-display: 'Libre Baskerville', Georgia, serif;
   --font-family-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
   --font-family-sans: 'JetBrains Mono', monospace;
 

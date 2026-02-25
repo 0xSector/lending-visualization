@@ -19,11 +19,9 @@ const ORBIT_DURATION = 1500;
 export function GlobeVisualization() {
   // Use the lending data hook for real/mock data
   const {
-    currentTransaction,
+    pendingTransaction,
     displayedTransactions,
-    isLoading,
-    isUsingMockData,
-    queueLength,
+    commitTransaction,
   } = useLendingData();
 
   const [pendingTx, setPendingTx] = useState<PendingTransaction | null>(null);
@@ -66,18 +64,18 @@ export function GlobeVisualization() {
 
   // Calculate table position relative to globe container
   const tablePosition = useMemo(() => {
-    // Position where the dot should fly to (top of table area)
+    // Position where the dot should fly to (top of first row in table)
     return {
-      x: globeSize + 120,  // Right of globe
-      y: globeSize / 2 - 180, // Near top of table
+      x: globeSize + 80,   // Right of globe, aligned with wallet column
+      y: globeSize / 2 - 230, // Top of first row
     };
   }, [globeSize]);
 
   // Watch for new transactions from the hook and start orbiting animation
   useEffect(() => {
-    if (currentTransaction && !pendingTx) {
+    if (pendingTransaction && !pendingTx) {
       // Start orbiting animation for the new transaction
-      setPendingTx({ transaction: currentTransaction, phase: 'orbiting' });
+      setPendingTx({ transaction: pendingTransaction, phase: 'orbiting' });
 
       // After single orbit, start settling
       setTimeout(() => {
@@ -86,7 +84,7 @@ export function GlobeVisualization() {
         );
       }, ORBIT_DURATION);
     }
-  }, [currentTransaction, pendingTx]);
+  }, [pendingTransaction, pendingTx]);
 
   // Handle when dot has settled into the table
   const handleDotSettled = useCallback(() => {
@@ -96,10 +94,13 @@ export function GlobeVisualization() {
       setNewTxId(tx.id);
       setPendingTx(null);
 
+      // Add the transaction to the table now that animation is complete
+      commitTransaction();
+
       // Clear the "new" highlight after animation
       setTimeout(() => setNewTxId(undefined), 800);
     }
-  }, []);
+  }, [commitTransaction]);
 
   // Handle modal
   const handleTransactionClick = useCallback((tx: Transaction) => {
@@ -139,7 +140,7 @@ export function GlobeVisualization() {
         <div className="flex flex-col items-center">
           {/* Title */}
           <div className="text-center mb-10">
-            <h1 className="font-display text-5xl italic text-[#1A1F71] mb-3 tracking-tight">
+            <h1 className="font-display text-5xl text-[#1A1F71] mb-3 tracking-tight">
               Onchain Lending
             </h1>
             <p className="text-gray-400 text-sm tracking-[0.15em] uppercase font-mono">
@@ -153,11 +154,11 @@ export function GlobeVisualization() {
             className="relative"
             style={{ width: globeSize, height: globeSize }}
           >
-            {/* Globe glow - Visa light blue */}
+            {/* Globe glow - Sky blue */}
             <div
               className="absolute rounded-full animate-glow"
               style={{
-                background: 'radial-gradient(circle, rgba(0,161,224,0.15) 0%, rgba(0,161,224,0) 70%)',
+                background: 'radial-gradient(circle, rgba(135,206,235,0.15) 0%, rgba(135,206,235,0) 70%)',
                 width: globeSize * 1.5,
                 height: globeSize * 1.5,
                 left: -globeSize * 0.25,
@@ -180,12 +181,12 @@ export function GlobeVisualization() {
             )}
           </div>
 
-          {/* Stats - refined pill with data source indicator */}
+          {/* Stats - refined pill */}
           <div className="mt-10 flex items-center gap-4 text-xs bg-white shadow-sm border border-gray-100 px-5 py-2.5 rounded-full">
             <div className="flex items-center gap-2">
-              <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${isUsingMockData ? 'bg-amber-400' : 'bg-emerald-500'}`} />
-              <span className={`font-medium tracking-wide uppercase text-[10px] ${isUsingMockData ? 'text-amber-500' : 'text-emerald-600'}`}>
-                {isLoading ? 'Loading' : isUsingMockData ? 'Demo' : 'Live'}
+              <div className="w-1.5 h-1.5 rounded-full animate-pulse bg-emerald-500" />
+              <span className="font-medium tracking-wide uppercase text-[10px] text-emerald-600">
+                Live
               </span>
             </div>
             <div className="h-3 w-px bg-gray-200" />
@@ -193,14 +194,6 @@ export function GlobeVisualization() {
               <span className="text-[#1A1F71] font-semibold">{displayedTransactions.length}</span>
               <span className="ml-1.5 text-[10px] tracking-wider">TXS</span>
             </div>
-            {!isUsingMockData && queueLength > 0 && (
-              <>
-                <div className="h-3 w-px bg-gray-200" />
-                <div className="text-gray-400 font-mono text-[10px]">
-                  +{queueLength} queued
-                </div>
-              </>
-            )}
           </div>
         </div>
 

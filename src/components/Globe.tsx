@@ -31,8 +31,8 @@ export function Globe({
   className,
   size = 400,
   baseColor = "#FFFFFF", // White globe surface
-  glowColor = "#00A1E0", // Visa light blue glow
-  markerColor = "#00A1E0", // Visa light blue for city markers
+  glowColor = "#87CEEB", // Sky blue glow
+  markerColor = "#87CEEB", // Sky blue for city markers
 }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const globeRef = useRef<ReturnType<typeof createGlobe> | null>(null);
@@ -47,8 +47,8 @@ export function Globe({
 
     const devicePixelRatio = window.devicePixelRatio || 1;
 
-    // Visa light blue for land dots
-    const visaBlue: [number, number, number] = [0, 161/255, 224/255]; // #00A1E0
+    // Sky blue for land dots (#87CEEB)
+    const skyBlue: [number, number, number] = [135/255, 206/255, 235/255]; // #87CEEB
 
     globeRef.current = createGlobe(canvas, {
       devicePixelRatio,
@@ -61,7 +61,7 @@ export function Globe({
       diffuse: 2,
       mapSamples: 20000,
       mapBrightness: 8,
-      baseColor: visaBlue, // Visa blue for land dots
+      baseColor: skyBlue, // Sky blue for land dots
       markerColor: resolvedMarkerColor,
       glowColor: resolvedGlowColor,
       opacity: 1,
